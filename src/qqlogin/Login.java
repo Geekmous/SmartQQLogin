@@ -20,8 +20,7 @@ public class Login {
     
     public static void main(String...strings){
         String url = "http://d1.web2.qq.com/channel/login2";
-        String qq = "404339376";
-        String pwd = "xianlei.";
+        
         try {
             URL u = new URL(url);
             HttpURLConnection http = (HttpURLConnection) u.openConnection();
