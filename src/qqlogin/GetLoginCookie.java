@@ -39,7 +39,8 @@ public class GetLoginCookie {
     
     private String urlCheck = "https://ssl.ptlogin2.qq.com/check";
     private String urlverifycode = "https://ssl.captcha.qq.com/getimage";
-    Map<String, String> Cookie = new HashMap<String, String>();
+    
+    Cookie cookie = new Cookie();
     
     GetLoginCookie(String uin, String password) {
         this.uin = uin;
@@ -47,6 +48,7 @@ public class GetLoginCookie {
         this.run();
     }
     
+    GetLoginCookie(){};
     
     public void run() {
         this.get_signature();
@@ -66,27 +68,17 @@ public class GetLoginCookie {
        
     }
     
-    public void get_signature() {
+    private void get_signature() {
         ///setp1 :: 
         try {
-            
             String url = urlSig + "?appid=" + URLEncoder.encode(appid, "utf-8").toString() + "&" + "s_url=" + URLEncoder.encode(urlSuccess, "utf-8").toString() + "&no_verifyimg=1";
             
             URL u = new URL(url);
             HttpURLConnection http = (HttpURLConnection) u.openConnection();
-            String key = null;
-            for(int i = 1; (key = http.getHeaderField(i) )!= null; i++) {
-                
-                if(key.indexOf("pt_login_sig") >= 0) {
-                    int index = key.indexOf("=");
-                    int index2 = key.indexOf(";");
-                    login_sig = key.substring(index + 1, index2);
-                }
-            }
+           
             Map<String, List<String>> m = http.getHeaderFields();
             for(Entry<String, String> entry : getCookie(m).entrySet()) {
-                Cookie.put(entry.getKey(), entry.getValue());
-                //System.out.println("Step 1 -- Key = " + entry.getKey() + "   Value = " + entry.getValue());
+                cookie.put(entry.getKey(), entry.getValue());              
             }
             
         } catch (MalformedURLException e) {
@@ -101,7 +93,7 @@ public class GetLoginCookie {
         }
     }
     
-    public void check_login() {
+    private void check_login() {
         //setp 2: get verifycode and pt_verifysession_v1
         String url = urlCheck + "?";
         try {
@@ -116,7 +108,6 @@ public class GetLoginCookie {
                 "r=0.9115912268128662"};
         for(int i = 0; i < param.length - 1; i++)
             url += param[i] + "&";
-        
         url += param[param.length - 1];
         }
         catch (UnsupportedEncodingException e1) {
@@ -124,8 +115,7 @@ public class GetLoginCookie {
         }
         
         
-        System.out.println("setp2 : url = " + url);
-        
+        System.out.println("setp2 : url = " + url); 
         try {
             URL u = new URL(url);
             HttpURLConnection http = (HttpURLConnection) u.openConnection();
@@ -133,9 +123,7 @@ public class GetLoginCookie {
             StringBuffer sb = new StringBuffer();
             while(input.ready()) {
                 sb.append(input.readLine() + "\n");
-            }
-           
-            
+            }     
             String result = sb.toString();
             System.out.println("result  : " + result);
             Pattern pattern = Pattern.compile("'.+'");
@@ -162,7 +150,7 @@ public class GetLoginCookie {
                 this.pt_verifysession_v1 = find[3];
                 Map<String, List<String>> m = http.getHeaderFields();
                 for(Entry<String, String> entry : getCookie(m).entrySet()) {
-                    Cookie.put(entry.getKey(), entry.getValue());
+                    cookie.put(entry.getKey(), entry.getValue());
                     System.out.println("Step 2 -- Key = " + entry.getKey() + "   Value = " + entry.getValue());
                 }
                 
@@ -193,9 +181,9 @@ public class GetLoginCookie {
         return map;
     }
     
-    public Map<String, String> getCookies() {
-        System.out.println("Got Cookies");
-        return Cookie;
+    public Cookie getCookies() {
+        
+        return cookie;
     }
     
     private String getImage() {
@@ -226,14 +214,14 @@ public class GetLoginCookie {
     }
     
     
-    public void getQR() {
+    private void getQR() {
         try {
             String url = "https://ssl.ptlogin2.qq.com/ptqrshow?appid=501004106&e=0&l=M&s=5&d=72&v=4&t=0.1";
             URL u = new URL(url);
             HttpURLConnection http = (HttpURLConnection) u.openConnection();
             Map<String, String> coo = getCookie(http.getHeaderFields());
             System.out.println("qrsig = " + coo.get("qrsig"));
-            this.Cookie.put("qrsig", coo.get("qrsig"));
+            this.cookie.put("qrsig", coo.get("qrsig"));
             
             FileOutputStream output = new FileOutputStream("./QR.jpg");
             InputStream input = http.getInputStream();
@@ -254,7 +242,7 @@ public class GetLoginCookie {
         
     }
     
-    public int checkQR() {
+    private int checkQR() {
         try {
             String url = "https://ssl.ptlogin2.qq.com/ptqrlogin?";
             String [] param = {
@@ -292,13 +280,9 @@ public class GetLoginCookie {
             URL u = new URL(url);
             HttpURLConnection http = (HttpURLConnection) u.openConnection();
             
-            String cook = "";
-            for(Entry<String, String> entry : Cookie.entrySet()) {
-                cook += entry.getKey() + "=" + entry.getValue() + ";";
-            }
             
             
-            http.setRequestProperty("Cookie", cook);
+            http.setRequestProperty("Cookie", cookie.toString());
             
             
             
@@ -325,12 +309,9 @@ public class GetLoginCookie {
             }
             else {
                 Map<String, String> coo = getCookie(http.getHeaderFields());
-                Cookie.put("ptwebqq", coo.get("ptwebqq"));
-                Cookie.put("uin", coo.get("uin"));
-                
-                
-                
-                
+                cookie.put("ptwebqq", coo.get("ptwebqq"));
+                cookie.put("uin", coo.get("uin"));
+         
                 String reurl = find[2];
                 URL ul = new URL(reurl);
                 HttpURLConnection https = (HttpURLConnection) ul.openConnection();
@@ -338,28 +319,15 @@ public class GetLoginCookie {
                 https.setInstanceFollowRedirects(false);
                 Map<String, String> cooki = getCookie(https.getHeaderFields());
                 
-                Cookie.put("skey", cooki.get("skey"));
+                cookie.put("skey", cooki.get("skey"));
                 
-                Cookie.put("p_skey", cooki.get("p_skey"));
-                Cookie.put("pt4_token", cooki.get("pt4_token"));
-                Cookie.put("uin", cooki.get("uin"));
-                Cookie.put("p_uin", cooki.get("p_uin"));
-                Cookie.put("pt2gguin", cooki.get("pt2gguin"));
-                
+                cookie.put("p_skey", cooki.get("p_skey"));
+                cookie.put("pt4_token", cooki.get("pt4_token"));
+                cookie.put("uin", cooki.get("uin"));
+                cookie.put("p_uin", cooki.get("p_uin"));
+                cookie.put("pt2gguin", cooki.get("pt2gguin"));
                 return 0;
-            }
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
+            }     
         } catch (MalformedURLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -371,11 +339,11 @@ public class GetLoginCookie {
     }
     
     
-    public void getVfwebqq() {
+    private void getVfwebqq() {
         String url = "http://s.web2.qq.com/api/getvfwebqq?";
         String referer = "http://s.web2.qq.com/proxy.hml?v=20130916001&callback=1&id=1";
         String param [] = {
-                "ptwebqq=" + Cookie.get("ptwebqq"),
+                "ptwebqq=" + cookie.get("ptwebqq"),
                 "clientid=53999199",
                 "t=" + new Random().nextDouble(),
         };
@@ -400,21 +368,18 @@ public class GetLoginCookie {
                     "p_uin",
                     "pt2gguin",
             };
-            String co = setCookie(Cookie, name);
-            https.setRequestProperty("Cookie", co);
+            https.setRequestProperty("Cookie", cookie.toString());
             https.setRequestProperty("referer", referer);
             String result = readHtml(https.getInputStream());
             Pattern pattern = Pattern.compile("\"vfwebqq\":\".+\"");
             Matcher matcher = pattern.matcher(result);
             if(matcher.find()) {
-                String s = matcher.group();
-                
-                
+                String s = matcher.group();    
                 int index = s.indexOf(":");
                 int end = s.lastIndexOf("\"");
                 String vfwebqq = s.substring(index + 2, end);
                 System.out.println("vfwebqq = " + vfwebqq);
-                Cookie.put("vfwebqq", vfwebqq);
+                cookie.put("vfwebqq", vfwebqq);
                 
             }
             
@@ -430,7 +395,7 @@ public class GetLoginCookie {
         
     }
     
-    public String readHtml(InputStream input) {
+    private String readHtml(InputStream input) {
         BufferedReader in = new BufferedReader(new InputStreamReader(input));
         StringBuffer sb = new StringBuffer();
         try {
@@ -447,7 +412,7 @@ public class GetLoginCookie {
     }
     
     
-    public String setParamToUrl(String url, String[] param) {
+    private String setParamToUrl(String url, String[] param) {
         StringBuffer s = new StringBuffer();
         s.append(url);
         for(int i = 0; i < param.length - 1; i++) {
@@ -459,7 +424,7 @@ public class GetLoginCookie {
     }
     
     
-    public String setCookie(Map<String, String> Cookie, String [] name) {
+    private String setCookie(Map<String, String> Cookie, String [] name) {
         StringBuffer sb = new StringBuffer();
         for(int i = 0; i < name.length; i++) {
             sb.append(name[i]);
@@ -471,12 +436,8 @@ public class GetLoginCookie {
     }
     
     public static void main(String...strings) {
-        GetLoginCookie t = new GetLoginCookie("870134757", "361875679");
-        t.run();
-        Map<String, String> cookie = t.getCookies();
-        for(Entry<String, String> entry : cookie.entrySet()) {
-            System.err.println(entry.getKey() + " = " + entry.getValue());
-        }
+        
+        
         
         
     }

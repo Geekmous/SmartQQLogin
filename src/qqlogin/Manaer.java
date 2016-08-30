@@ -21,8 +21,8 @@ import org.json.JSONObject;
 import tuling.Answer;
 
 public class Manaer {
-    Map<String, String> Cookie;
-    String CookieParamName [] = {
+    Cookie cookie;
+    String cookieParamName [] = {
             "skey",
             "p_skey",
             "pt4_token",
@@ -38,8 +38,8 @@ public class Manaer {
     
     
     
-    Manaer(Map<String, String> cookie) {
-        this.Cookie = cookie;
+    Manaer(Cookie cookie) {
+        this.cookie = cookie;
     }
     
     
@@ -68,8 +68,8 @@ public class Manaer {
             URL u = new URL(rawUrl);
             URLConnection con = u.openConnection();
             HttpURLConnection http = (HttpURLConnection) con;       
-            String cookie = this.setCookie(Cookie, CookieParamName);
-                http.setRequestProperty("Cookie", cookie); 
+            
+            http.setRequestProperty("cookie", cookie.toString());
             if(referer != null) 
                 http.setRequestProperty("Referer", referer);
             http.setRequestProperty("Origin", "http://d1.web2.qq.com");
@@ -80,8 +80,8 @@ public class Manaer {
             
             http.setRequestMethod("POST");
             
-            String ptwebqq = Cookie.get("ptwebqq");
-            String psessionid = Cookie.get("psessionid");
+            String ptwebqq = cookie.get("ptwebqq");
+            String psessionid = cookie.get("psessionid");
             String r = "r={\"ptwebqq\":\"" + ptwebqq + "\",\"clientid\":" + 53999199 + ",\"psessionid\":\""+ psessionid + "\",\"key\":\"\"}"; 
             
             
@@ -159,9 +159,8 @@ public class Manaer {
             HttpURLConnection http = (HttpURLConnection) con;
            
             
-            String cookie = this.setCookie(Cookie, CookieParamName);
-            System.out.println("cookie = " + cookie);
-                http.setRequestProperty("Cookie", cookie);
+            
+            http.setRequestProperty("cookie", cookie.toString());
             
             if(referer != null) 
                 http.setRequestProperty("Referer", referer);
@@ -172,11 +171,11 @@ public class Manaer {
             http.setDoOutput(true);
             http.setRequestMethod("POST");
             
-            String ptwebqq = Cookie.get("ptwebqq");
-            String psessionid = Cookie.get("psessionid");
+            String ptwebqq = cookie.get("ptwebqq");
+            String psessionid = cookie.get("psessionid");
             String r = "r={\"ptwebqq\":\"" + ptwebqq + "\",\"clientid\":" + 53999199 + ",\"psessionid\":\""+ psessionid + "\",\"key\":\"\"}";
-            long uin = Long.parseLong(Cookie.get("uin").replace("o", ""));
-            String param = "r={\"vfwebqq\":\"" + Cookie.get("vfwebqq") + "\",\"hash\":\"" + HashCode.gethashCode(uin, ptwebqq) + "\"}";
+            long uin = Long.parseLong(cookie.get("uin").replace("o", ""));
+            String param = "r={\"vfwebqq\":\"" + cookie.get("vfwebqq") + "\",\"hash\":\"" + HashCode.gethashCode(uin, ptwebqq) + "\"}";
             BufferedWriter output = new BufferedWriter(new OutputStreamWriter(http.getOutputStream()));
             System.out.println(param);
             output.write(param);
@@ -221,9 +220,8 @@ public class Manaer {
             HttpURLConnection http = (HttpURLConnection) con;
            
             
-            String cookie = this.setCookie(Cookie, CookieParamName);
-            System.out.println("cookie = " + cookie);
-                http.setRequestProperty("Cookie", cookie);
+            
+            http.setRequestProperty("cookie", cookie.toString());
             
             if(referer != null) 
                 http.setRequestProperty("Referer", referer);
@@ -234,11 +232,11 @@ public class Manaer {
             http.setDoOutput(true);
             http.setRequestMethod("POST");
             
-            String ptwebqq = Cookie.get("ptwebqq");
-            String psessionid = Cookie.get("psessionid");
+            String ptwebqq = cookie.get("ptwebqq");
+            String psessionid = cookie.get("psessionid");
             String r = "r={\"ptwebqq\":\"" + ptwebqq + "\",\"clientid\":" + 53999199 + ",\"psessionid\":\""+ psessionid + "\",\"key\":\"\"}";
-            long uin = Long.parseLong(Cookie.get("uin").replace("o", ""));
-            String param = "r={\"vfwebqq\":\"" + Cookie.get("vfwebqq") + "\",\"hash\":\"" + HashCode.gethashCode(uin, ptwebqq) + "\"}";
+            long uin = Long.parseLong(cookie.get("uin").replace("o", ""));
+            String param = "r={\"vfwebqq\":\"" + cookie.get("vfwebqq") + "\",\"hash\":\"" + HashCode.gethashCode(uin, ptwebqq) + "\"}";
             BufferedWriter output = new BufferedWriter(new OutputStreamWriter(http.getOutputStream()));
             System.out.println(param);
             output.write(param);
@@ -276,9 +274,9 @@ public class Manaer {
     public int getDiscusList() {
         String rawUrl = "http://s.web2.qq.com/api/get_discus_list?";
         String referer = "http://s.web2.qq.com/proxy.html?v=20130916001&callback=1&id=1";
-        String ptwebqq = Cookie.get("ptwebqq");
-        String psessionid = Cookie.get("psessionid");
-        rawUrl = rawUrl + "clientid=53999199&psessionid=" + psessionid + "&t=1472274729901&vfwebqq=" + Cookie.get("vfwebqq");
+        String ptwebqq = cookie.get("ptwebqq");
+        String psessionid = cookie.get("psessionid");
+        rawUrl = rawUrl + "clientid=53999199&psessionid=" + psessionid + "&t=1472274729901&vfwebqq=" + cookie.get("vfwebqq");
         try {
             URL u = new URL(rawUrl);
             URLConnection con = u.openConnection();
@@ -286,9 +284,8 @@ public class Manaer {
             HttpURLConnection http = (HttpURLConnection) con;
            
             
-            String cookie = this.setCookie(Cookie, CookieParamName);
-            System.out.println("cookie = " + cookie);
-                http.setRequestProperty("Cookie", cookie);
+            
+            http.setRequestProperty("cookie", cookie.toString());
             
             if(referer != null) 
                 http.setRequestProperty("Referer", referer);
@@ -327,8 +324,8 @@ public class Manaer {
     public int getSelfInfo() {
         String rawUrl = "http://s.web2.qq.com/api/get_self_info2?t=1472274729906";
         String referer = "http://s.web2.qq.com/proxy.html?v=20130916001&callback=1&id=1";
-        String ptwebqq = Cookie.get("ptwebqq");
-        String psessionid = Cookie.get("psessionid");
+        String ptwebqq = cookie.get("ptwebqq");
+        String psessionid = cookie.get("psessionid");
         
         try {
             URL u = new URL(rawUrl);
@@ -337,9 +334,8 @@ public class Manaer {
             HttpURLConnection http = (HttpURLConnection) con;
            
             
-            String cookie = this.setCookie(Cookie, CookieParamName);
-            System.out.println("cookie = " + cookie);
-                http.setRequestProperty("Cookie", cookie);
+           
+                http.setRequestProperty("Cookie", cookie.toString());
             
             if(referer != null) 
                 http.setRequestProperty("Referer", referer);
@@ -376,9 +372,9 @@ public class Manaer {
     public int getOnlineBuddyes() {
         String rawUrl = "http://d1.web2.qq.com/channel/get_online_buddies2?";
         String referer = "http://d1.web2.qq.com/proxy.html?v=20151105001&callback=1&id=2";
-        String ptwebqq = Cookie.get("ptwebqq");
-        String psessionid = Cookie.get("psessionid");
-        rawUrl = rawUrl + "clientid=53999199&psessionid=" + psessionid + "&t=1472274729901&vfwebqq=" + Cookie.get("vfwebqq");
+        String ptwebqq = cookie.get("ptwebqq");
+        String psessionid = cookie.get("psessionid");
+        rawUrl = rawUrl + "clientid=53999199&psessionid=" + psessionid + "&t=1472274729901&vfwebqq=" + cookie.get("vfwebqq");
         try {
             URL u = new URL(rawUrl);
             URLConnection con = u.openConnection();
@@ -386,9 +382,8 @@ public class Manaer {
             HttpURLConnection http = (HttpURLConnection) con;
            
             
-            String cookie = this.setCookie(Cookie, CookieParamName);
-            System.out.println("cookie = " + cookie);
-                http.setRequestProperty("Cookie", cookie);
+           
+            http.setRequestProperty("cookie", cookie.toString());
             
             if(referer != null) 
                 http.setRequestProperty("Referer", referer);
@@ -434,9 +429,8 @@ public class Manaer {
             HttpURLConnection http = (HttpURLConnection) con;
            
             
-            String cookie = this.setCookie(Cookie, CookieParamName);
-            System.out.println("cookie = " + cookie);
-                http.setRequestProperty("Cookie", cookie);
+            
+            http.setRequestProperty("cookie", cookie.toString());
             
             if(referer != null) 
                 http.setRequestProperty("Referer", referer);
@@ -447,9 +441,9 @@ public class Manaer {
             http.setDoOutput(true);
             http.setRequestMethod("POST");
             
-            String ptwebqq = Cookie.get("ptwebqq");
-            String psessionid = Cookie.get("psessionid");
-            String r = "r={\"vfwebqq\":\"" + Cookie.get("vfwebqq") + "\",\"clientid\":" + 53999199 + ",\"psessionid\":\""+ psessionid + "\",\"key\":\"\"}";
+            String ptwebqq = cookie.get("ptwebqq");
+            String psessionid = cookie.get("psessionid");
+            String r = "r={\"vfwebqq\":\"" + cookie.get("vfwebqq") + "\",\"clientid\":" + 53999199 + ",\"psessionid\":\""+ psessionid + "\",\"key\":\"\"}";
            
             
             BufferedWriter output = new BufferedWriter(new OutputStreamWriter(http.getOutputStream()));
@@ -489,19 +483,15 @@ public class Manaer {
     public String getFriendUin(String tuin) {
         String rawUrl = "http://s.web2.qq.com/api/get_friend_uin2?";
         String referer = "http://d1.web2.qq.com/proxy.html?v=20151105001&callback=1&id=2";
-        String ptwebqq = Cookie.get("ptwebqq");
-        String psessionid = Cookie.get("psessionid");
-        rawUrl = rawUrl + "type=1&tuin=" + tuin + "&t=1472274729901&vfwebqq=" + Cookie.get("vfwebqq");
+        String ptwebqq = cookie.get("ptwebqq");
+        String psessionid = cookie.get("psessionid");
+        rawUrl = rawUrl + "type=1&tuin=" + tuin + "&t=1472274729901&vfwebqq=" + cookie.get("vfwebqq");
         try {
             URL u = new URL(rawUrl);
             URLConnection con = u.openConnection();
             
-            HttpURLConnection http = (HttpURLConnection) con;
-           
-            
-            String cookie = this.setCookie(Cookie, CookieParamName);
-            System.out.println("cookie = " + cookie);
-                http.setRequestProperty("Cookie", cookie);
+            HttpURLConnection http = (HttpURLConnection) con;      
+            http.setRequestProperty("cookie", cookie.toString());
             
             if(referer != null) 
                 http.setRequestProperty("Referer", referer);
@@ -544,9 +534,8 @@ public class Manaer {
             HttpURLConnection http = (HttpURLConnection) con;
            
             
-            String cookie = this.setCookie(Cookie, CookieParamName);
-            System.out.println("cookie = " + cookie);
-                http.setRequestProperty("Cookie", cookie);
+             System.out.println(cookie.toString());
+            http.setRequestProperty("cookie", cookie.toString());
             
             if(referer != null) 
                 http.setRequestProperty("Referer", referer);
@@ -557,8 +546,8 @@ public class Manaer {
             http.setDoOutput(true);
             http.setRequestMethod("POST");
             
-            String ptwebqq = Cookie.get("ptwebqq");
-            String psessionid = Cookie.get("psessionid");
+            String ptwebqq = cookie.get("ptwebqq");
+            String psessionid = cookie.get("psessionid");
             String r = "r={\"to\":" + tuin + ",\"content\":\"[\\\"" + content + "\\\",[\\\"font\\\",{\\\"name\\\":\\\"宋体\\\",\\\"size\\\":10,\\\"style\\\":[0,0,0],\\\"color\\\":\\\"000000\\\"}]]\",\"face\":645,\"clientid\": "+ 53999199 + ",\"msg_id\":" + 33000001 + ",\"psessionid\":\"8368046764001d636f6e6e7365727665725f77656271714031302e3133332e34312e383400001ad00000066b026e040015808a206d0000000a406172314338344a69526d0000002859185d94e66218548d1ecb1a12513c86126b3afb97a3c2955b1070324790733ddb059ab166de6857\"}";
             BufferedWriter output = new BufferedWriter(new OutputStreamWriter(http.getOutputStream()));
             System.out.println(r);
@@ -595,19 +584,13 @@ public class Manaer {
     
     public int sendGroupMessage(String Group_uin,String content) {
         String rawUrl = "http://d1.web2.qq.com/channel/send_qun_msg2";
-        String referer = "http://d1.web2.qq.com/proxy.html?v=20151105001&callback=1&id=2";
-        
+        String referer = "http://d1.web2.qq.com/proxy.html?v=20151105001&callback=1&id=2";        
         try {
             URL u = new URL(rawUrl);
-            URLConnection con = u.openConnection();
-            
-            HttpURLConnection http = (HttpURLConnection) con;
-           
-            
-            String cookie = this.setCookie(Cookie, CookieParamName);
-            
-                http.setRequestProperty("Cookie", cookie);
-            
+            URLConnection con = u.openConnection();            
+            HttpURLConnection http = (HttpURLConnection) con;          
+                     
+            http.setRequestProperty("cookie", cookie.toString());      
             if(referer != null) 
                 http.setRequestProperty("Referer", referer);
             http.setRequestProperty("Origin", "http://s.web2.qq.com");
@@ -622,8 +605,7 @@ public class Manaer {
             System.out.println("Group Post :::" + r);
             output.write(r);
             output.flush();
-            output.close();
-            
+            output.close();   
             BufferedReader input = new BufferedReader(new InputStreamReader(http.getInputStream()));
             StringBuffer sb = new StringBuffer();
             while(input.ready()) {
@@ -655,19 +637,21 @@ public class Manaer {
     public void OnReceivePersonalMessage(Message m) {
         Answer answer = new Answer();
         String ans = answer.ask(m.content);
-        this.sendPersonMessage(m.fromUin, ans);
+        MessageSender sender = new MessageSender(cookie);
+        sender.sendMessage(m.fromUin, ans, m.type);
     }
     
     public void OnReceiveGroupMessage(Message m) {
         Answer answer = new Answer();
         String ans = answer.ask(m.content);
-        this.sendGroupMessage(m.fromUin, ans);
+        MessageSender sender = new MessageSender(cookie);
+        sender.sendMessage(m.fromUin, ans, m.type);
     }
     
-    public String setCookie(Map<String, String> Cookie, String [] name) {
+    public String setcookie(Map<String, String> cookie, String [] name) {
         StringBuffer sb = new StringBuffer();
-        for(Entry<String, String> entry : Cookie.entrySet()) {
-            //System.err.println("<Cookie : " + entry.getKey() + " =  " + entry.getValue());
+        for(Entry<String, String> entry : cookie.entrySet()) {
+            //System.err.println("<cookie : " + entry.getKey() + " =  " + entry.getValue());
             sb.append(entry.getKey());
             sb.append("=");
             sb.append(entry.getValue());
