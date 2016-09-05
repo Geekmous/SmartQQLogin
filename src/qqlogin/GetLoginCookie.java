@@ -50,6 +50,59 @@ public class GetLoginCookie {
     
     GetLoginCookie(){};
     
+    public void getPsessionid() {
+        String url = "http://d1.web2.qq.com/channel/login2";
+       
+        try {
+            URL u = new URL(url);
+            HttpURLConnection http = (HttpURLConnection) u.openConnection();
+
+            http.setRequestProperty("Host", "d1.web2.qq.com");
+            http.setRequestProperty("Referer", "http://d1.web2.qq.com/proxy.html?v=20151105001&callback=1&id=2");
+            http.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:47.0) Gecko/20100101 Firefox/47.0");
+            
+            
+            String ptwebqq = cookie.get("ptwebqq");
+            String param = "r={\"ptwebqq\":\"" + ptwebqq + "\",\"clientid\": " + 53999199 + ",\"psessionid\":\"\",\"status\":\"online\"}";
+            System.out.println(param);
+           
+            http.setRequestProperty("Cookie", cookie.toString());
+            http.setDoInput(true);
+            http.setDoOutput(true);
+            http.setRequestMethod("POST");
+            BufferedWriter output = new BufferedWriter(new OutputStreamWriter(http.getOutputStream()));
+            output.write(param);
+            output.flush();
+            output.close();
+      
+            BufferedReader input = new BufferedReader(new InputStreamReader(http.getInputStream(), "utf-8"));
+            
+            StringBuffer sbs = new StringBuffer();
+            while(input.ready()) {
+                sbs.append(input.readLine());
+                sbs.append("\n");
+            }
+            String result = sbs.toString();
+            System.out.println(result);
+            
+            
+            Pattern pattern = Pattern.compile("\"psessionid\":\".+?\"");
+            Matcher matcher = pattern.matcher(result);
+            if(matcher.find()) {
+                String s = matcher.group();
+        
+                int index = s.indexOf(":");
+                int end = s.lastIndexOf("\"");
+                String psessionid = s.substring(index + 2, end);
+                System.out.println("psessionid = " + psessionid);
+                cookie.put("psessionid", psessionid);
+                
+            }
+        }catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
     public void run() {
         this.get_signature();
         
@@ -65,6 +118,7 @@ public class GetLoginCookie {
         }
         s.setVisible(false);
         this.getVfwebqq();
+        this.getPsessionid();
        
     }
     

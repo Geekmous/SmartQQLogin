@@ -18,10 +18,12 @@ import java.util.Random;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import GetData.getFriendAccount;
+import dataBase.savedToLocal;
 import tuling.Answer;
 
 public class Manaer {
-    Cookie cookie;
+    public Cookie cookie;
     String cookieParamName [] = {
             "skey",
             "p_skey",
@@ -101,33 +103,21 @@ public class Manaer {
             
             System.err.println("Start Process");
             String result = sb.toString();
-            JSONObject json = new JSONObject(result);
-            if(json.has("result")) {
-               JSONArray jarray = json.getJSONArray("result");
-               JSONObject p = jarray.getJSONObject(0);
-               String type = p.getString("poll_type");
-               JSONObject va = p.getJSONObject("value");
-               JSONArray contentArray = va.getJSONArray("content");
-               String content = contentArray.getString(1);
-               Object from_uin = va.get("from_uin");
-               Object to_uin = va.get("to_uin");
-               Message m = new Message();
-               
-               m.type = type;
-               m.content = content;
-               m.fromUin = from_uin.toString();
-               m.toUin = to_uin.toString();
-               System.err.println("JSON finished");
-               if(m.type.indexOf("group") <0 ) {
-                   
+            System.out.println(result);
+            Message m = new MessageProcess(result).getMessage();
+           
+            System.err.println("JSON finished");
+            if(m != null)
+               if(m.type.indexOf("group") < 0 ) { 
                    System.out.println("Receive PersonnalMessage");
+                   m.fromUin = new getFriendAccount(cookie).getaccount(m.fromUin);
                    this.OnReceivePersonalMessage(m);
                }
                else {
                    System.out.println("Receive Group : Message");
                    this.OnReceiveGroupMessage(m);
                }
-            }
+            
             System.out.println("Process finish");
             
             
@@ -637,15 +627,19 @@ public class Manaer {
     public void OnReceivePersonalMessage(Message m) {
         Answer answer = new Answer();
         String ans = answer.ask(m.content);
-        MessageSender sender = new MessageSender(cookie);
-        sender.sendMessage(m.fromUin, ans, m.type);
+        savedToLocal s = new savedToLocal();
+        s.save(m);
+        //MessageSender sender = new MessageSender(cookie);
+        //sender.sendMessage(m.fromUin, ans, m.type);
     }
     
     public void OnReceiveGroupMessage(Message m) {
         Answer answer = new Answer();
         String ans = answer.ask(m.content);
-        MessageSender sender = new MessageSender(cookie);
-        sender.sendMessage(m.fromUin, ans, m.type);
+        savedToLocal s = new savedToLocal();
+        s.save(m);
+        //MessageSender sender = new MessageSender(cookie);
+        //sender.sendMessage(m.fromUin, ans, m.type);
     }
     
     public String setcookie(Map<String, String> cookie, String [] name) {
