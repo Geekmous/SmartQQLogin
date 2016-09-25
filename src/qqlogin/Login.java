@@ -21,8 +21,9 @@ public class Login {
     public static void main(String...strings){
        
         GetLoginCookie get = new GetLoginCookie();
-        get.run();
+              
         Cookie cookie = get.getCookies();
+        
         Manaer manager = new Manaer(cookie);
         manager.run();
         

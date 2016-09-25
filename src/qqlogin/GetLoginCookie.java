@@ -42,15 +42,12 @@ public class GetLoginCookie {
     
     Cookie cookie = new Cookie();
     
-    GetLoginCookie(String uin, String password) {
-        this.uin = uin;
-        this.pwd = password;
+    GetLoginCookie() {     
         this.run();
     }
     
-    GetLoginCookie(){};
-    
-    public void getPsessionid() {
+      //this method is used in password login,it is useless for QR login
+    private void getPsessionid() {
         String url = "http://d1.web2.qq.com/channel/login2";
        
         try {
@@ -103,21 +100,34 @@ public class GetLoginCookie {
             e.printStackTrace();
         }
     }
+    
+    
+    
+    
     public void run() {
         this.get_signature();
         
         this.getQR();
+        
         ShowImage s = new ShowImage("./QR.jpg");
-        while(this.checkQR() != 0) {
+        int flag = 1;
+        
+        while(flag != 0) {
+            flag = checkQR();
+            System.out.println("flag : " + flag);
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
+            
         }
+        
         s.setVisible(false);
+        
         this.getVfwebqq();
+        
         this.getPsessionid();
        
     }
@@ -128,9 +138,11 @@ public class GetLoginCookie {
             String url = urlSig + "?appid=" + URLEncoder.encode(appid, "utf-8").toString() + "&" + "s_url=" + URLEncoder.encode(urlSuccess, "utf-8").toString() + "&no_verifyimg=1";
             
             URL u = new URL(url);
+            
             HttpURLConnection http = (HttpURLConnection) u.openConnection();
            
             Map<String, List<String>> m = http.getHeaderFields();
+            
             for(Entry<String, String> entry : getCookie(m).entrySet()) {
                 cookie.put(entry.getKey(), entry.getValue());              
             }
@@ -147,6 +159,8 @@ public class GetLoginCookie {
         }
     }
     
+    
+    /*
     private void check_login() {
         //setp 2: get verifycode and pt_verifysession_v1
         String url = urlCheck + "?";
@@ -167,7 +181,6 @@ public class GetLoginCookie {
         catch (UnsupportedEncodingException e1) {
             e1.printStackTrace();
         }
-        
         
         System.out.println("setp2 : url = " + url); 
         try {
@@ -221,8 +234,11 @@ public class GetLoginCookie {
         }
     }
     
+    */
+    
     
     private Map<String, String> getCookie(Map<String, List<String>> m) {
+        
         Map<String, String> map = new HashMap<String, String>();
         if( m.get("Set-Cookie") != null)
         for(String s : m.get("Set-Cookie")) {  
@@ -244,6 +260,7 @@ public class GetLoginCookie {
         try {
             URL u = new URL(urlverifycode);
             HttpURLConnection http = (HttpURLConnection) u.openConnection();
+            
             Map<String, String> coo = getCookie(http.getHeaderFields());
             
             String verifysession = coo.get("verifysession");
@@ -297,8 +314,10 @@ public class GetLoginCookie {
     }
     
     private int checkQR() {
+        
         try {
             String url = "https://ssl.ptlogin2.qq.com/ptqrlogin?";
+            
             String [] param = {
                     "webqq_type=10",
                     "remember_uin=1",
@@ -323,10 +342,12 @@ public class GetLoginCookie {
             };
             StringBuffer s = new StringBuffer();
             s.append(url);
+            
             for(int i = 0; i < param.length - 1; i++) {
                 s.append(param[i]);
                 s.append("&");
             }
+            
             s.append(param[param.length - 1]);
             url = s.toString();
             

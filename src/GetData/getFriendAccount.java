@@ -76,6 +76,7 @@ public class getFriendAccount extends Abstract{
     
     private int jsonProcess() {
         System.out.println("result :   " + result);
+        
         if(result != null) {
             JSONObject json = new JSONObject(result);
             Object retcode = json.get("retcode");

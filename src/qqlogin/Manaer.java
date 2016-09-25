@@ -20,6 +20,9 @@ import org.json.JSONObject;
 
 import GetData.getFriendAccount;
 import dataBase.savedToLocal;
+import manager.GetDiscussList;
+import manager.GetFriendList;
+import manager.GetGroupList;
 import tuling.Answer;
 
 public class Manaer {
@@ -50,18 +53,27 @@ public class Manaer {
     
     
     public void run() {
-        this.receiveUserFriends();
-        this.group_name_list();
-        this.getDiscusList();
+        //this.receiveUserFriends();
+        new GetFriendList(cookie).getFriendList();
+        
+        //this.group_name_list();
+        new GetGroupList(cookie).getGroupList();
+        
+        //this.getDiscusList();
+        new GetDiscussList(cookie).getDiscussList();
+        
         this.getSelfInfo();
         this.getOnlineBuddyes();
         this.getRecentList();
+        
         while(true) {
      
                 receiveMessage();
             
         }
     }
+    
+    
     public int receiveMessage() {
         System.err.println("Start Receive");
         String rawUrl = "http://d1.web2.qq.com/channel/poll2";
@@ -138,14 +150,16 @@ public class Manaer {
     }
     
     
+    
     public int receiveUserFriends() {
         String rawUrl = "http://s.web2.qq.com/api/get_user_friends2";
         String referer = "http://s.web2.qq.com/proxy.html?v=20130916001&callback=1&id=1";
         
+        
         try {
             URL u = new URL(rawUrl);
             URLConnection con = u.openConnection();
-            
+
             HttpURLConnection http = (HttpURLConnection) con;
            
             
